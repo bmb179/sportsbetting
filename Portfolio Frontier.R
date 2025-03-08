@@ -108,7 +108,7 @@ optimize.bets <- function(bet.data) {
 
 # Example usage
 my.bets <- data.frame(
-  names = c('WAS', 'LAR', 'BUF', 'NYJ'),
+  names = c('Montreal Canadiens', 'LAR', 'BUF', 'NYJ'),
   sharp.odds = c(5.1, 3.5, 2.02, 5),
   american.odds = c(410, 250, 102, 400)
 )
