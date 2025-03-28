@@ -6,12 +6,14 @@ library(quadprog)
 library(plotly)
 options(scipen = 999)
 
+# Convert American odds to decimal European odds
 american.odds.conv <- function(american.odds) {
-  ifelse(american.odds > 0, 
+  ifelse(american.odds >= 0, 
          (american.odds / 100) + 1, 
          (100 / abs(american.odds)) + 1)
 }
 
+# Add a dotted line to the plot to highlight optimal risk adjusted returns
 vline <- function(x = 0, color = 'black') {
   list(
     type = 'line',
@@ -24,6 +26,7 @@ vline <- function(x = 0, color = 'black') {
   )
 }
 
+# Creates an interactive plot showing the efficient frontier
 interactive.plot <- function(team.weights, team.names, vline.num) {
   tooltip.text <- apply(team.weights[, team.names], 1, function(weights) {
     # Convert weights to percentages rounded to 2 decimal places
@@ -54,7 +57,7 @@ optimize.bets <- function(bet.data) {
   }
   
   bet.data$soft.odds <- american.odds.conv(bet.data$american.odds)
-  bet.data$implied.probability <- 1 / bet.data$sharp.odds
+  bet.data$implied.probability <- 1 / american.odds.conv(bet.data$sharp.odds)
   bet.data$expected.returns <- bet.data$soft.odds - 1
   
   bet.data$variances <- ((bet.data$sharp.odds - 1)^2 * 
@@ -108,9 +111,9 @@ optimize.bets <- function(bet.data) {
 
 # Example usage
 my.bets <- data.frame(
-  names = c('Montreal Canadiens', 'LAR', 'BUF', 'NYJ'),
-  sharp.odds = c(5.1, 3.5, 2.02, 5),
-  american.odds = c(410, 250, 102, 400)
+  names = c('LAR', 'BUF', 'NYJ'),
+  sharp.odds = c(305, 202, 500),
+  american.odds = c(250, 102, 400)
 )
 
 result <- optimize.bets(my.bets)
